@@ -19,6 +19,23 @@ services:
     volumes:
       - ./httpd/src:/usr/local/apache2/htdocs
 
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8000:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mariadb
+    depends_on:
+      - mariadb
+
   test.a:
     image: httpd:2.4
     restart: always
