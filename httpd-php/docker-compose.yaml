@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  httpd:
+    image: httpd:2.4
+    ports:
+      - "80:80"
+    volumes:
+      - ./httpd/src:/usr/local/apache2/htdocs/test.a
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/conf.d:/usr/local/apache2/conf.d
+    depends_on:
+      - php
+
+  php:
+    image: php:7.4.13-fpm
+    volumes:
+      - ./httpd/src:/usr/local/apache2/htdocs

@@ -1,0 +1,4 @@
+Test A
+<?php
+
+phpinfo();

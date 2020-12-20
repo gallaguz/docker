@@ -1,0 +1,77 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:1.13
+    restart: always
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - test.a
+      - test.b
+      - test.c
+
+  php-fpm:
+    image: php:7.4.13-fpm
+    volumes:
+      - ./httpd/src:/usr/local/apache2/htdocs
+
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8000:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mariadb
+    depends_on:
+      - mariadb
+
+  test.a:
+    image: httpd:2.4
+    restart: always
+    container_name: test.a
+    volumes:
+      - ./httpd/src:/usr/local/apache2/htdocs
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/conf.d/test.a.conf:/usr/local/apache2/conf.d/test.a.conf
+    depends_on:
+      - php-fpm
+    networks:
+      - default
+
+  test.b:
+    image: httpd:2.4
+    restart: always
+    container_name: test.b
+    volumes:
+      - ./httpd/src:/usr/local/apache2/htdocs
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/conf.d/test.b.conf:/usr/local/apache2/conf.d/test.b.conf
+    depends_on:
+      - php-fpm
+    networks:
+      - default
+
+  test.c:
+    image: httpd:2.4
+    restart: always
+    container_name: test.c
+    volumes:
+      - ./httpd/src:/usr/local/apache2/htdocs
+      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/conf.d/test.c.conf:/usr/local/apache2/conf.d/test.c.conf
+    depends_on:
+      - php-fpm
+    networks:
+      - default
+
